@@ -1,0 +1,40 @@
+<div class="page-container">
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+
+  <div *ngIf="cliente && !loading">
+    <div class="page-header">
+      <div>
+        <button class="btn btn-ghost" (click)="indietro()">← Indietro</button>
+        <h1>{{ cliente.nome }} {{ cliente.cognome }}</h1>
+      </div>
+      <button class="btn btn-primary" (click)="modifica()">✏️ Modifica</button>
+    </div>
+
+    <div class="detail-info">
+      <p>📧 <strong>Email:</strong> {{ cliente.email }}</p>
+      <p>📍 <strong>Indirizzo:</strong> {{ cliente.ind_consegna }}</p>
+    </div>
+
+    <div class="section">
+      <h2>📦 Ordini ({{ ordini.length }})</h2>
+      <div class="table-wrapper" *ngIf="ordini.length > 0">
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Data</th><th>Stato</th><th>Totale</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of ordini" (click)="apriOrdine(o.id_ordine)" class="row-clickable">
+              <td>#{{ o.id_ordine }}</td>
+              <td>{{ o.data_ora | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td><span class="badge" [ngClass]="badgeClass(o.stato)">{{ o.stato }}</span></td>
+              <td>€ {{ o.totale | number:'1.2-2' }}</td>
+              <td><button class="btn btn-sm btn-outline" (click)="apriOrdine(o.id_ordine); $event.stopPropagation()">Vedi</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="empty-state" *ngIf="ordini.length === 0">Nessun ordine.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>🍽️ Ristoranti</h1>
+    <button class="btn btn-primary" (click)="nuovo()">+ Nuovo Ristorante</button>
+  </div>
+
+  <!-- Filtri -->
+  <div class="filtri-card">
+    <input
+      class="input-field"
+      type="text"
+      placeholder="Cerca per nome..."
+      [(ngModel)]="filtroNome"
+      (keyup.enter)="cerca()"
+    />
+    <select class="input-field" [(ngModel)]="filtroCategoria">
+      <option [value]="undefined">Tutte le categorie</option>
+      <option *ngFor="let c of categorie" [value]="c.id_categoria">{{ c.nome }}</option>
+    </select>
+    <button class="btn btn-secondary" (click)="cerca()">Cerca</button>
+    <button class="btn btn-ghost" (click)="resetFiltri()">Reset</button>
+  </div>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+
+  <!-- Lista -->
+  <div class="grid-cards" *ngIf="!loading">
+    <div
+      class="card clickable"
+      *ngFor="let r of ristoranti"
+      (click)="apriDettaglio(r.id_ristorante)"
+    >
+      <div class="card-body">
+        <span class="badge">{{ r.categoria_nome }}</span>
+        <h3>{{ r.nome }}</h3>
+        <p class="text-muted">📍 {{ r.indirizzo }}</p>
+        <p class="text-muted">📞 {{ r.telefono }}</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-sm btn-outline" (click)="apriDettaglio(r.id_ristorante); $event.stopPropagation()">
+          Dettaglio
+        </button>
+        <button class="btn btn-sm btn-danger" (click)="elimina(r.id_ristorante, $event)">
+          Elimina
+        </button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="ristoranti.length === 0">
+      <p>Nessun ristorante trovato.</p>
+    </div>
+  </div>
+</div>

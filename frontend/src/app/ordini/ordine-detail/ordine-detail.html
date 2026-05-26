@@ -1,0 +1,69 @@
+<div class="page-container">
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div *ngIf="ordine && !loading">
+    <div class="page-header">
+      <div>
+        <button class="btn btn-ghost" (click)="indietro()">← Indietro</button>
+        <h1>Ordine #{{ ordine.id_ordine }}</h1>
+        <span class="badge" [ngClass]="badgeClass(ordine.stato)">{{ ordine.stato }}</span>
+      </div>
+      <button class="btn btn-danger" (click)="elimina()">🗑️ Elimina</button>
+    </div>
+
+    <!-- Info ordine -->
+    <div class="detail-info">
+      <p>👤 <strong>Cliente:</strong> {{ ordine.cliente_nome }} {{ ordine.cliente_cognome }}</p>
+      <p>🛵 <strong>Fattorino:</strong> {{ ordine.fattorino_nome || 'Non assegnato' }}</p>
+      <p>📅 <strong>Data:</strong> {{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</p>
+      <p>💶 <strong>Totale:</strong> € {{ ordine.totale | number:'1.2-2' }}</p>
+    </div>
+
+    <!-- Aggiorna stato -->
+    <div class="section">
+      <h2>🔄 Aggiorna Stato</h2>
+      <div class="filtri-card">
+        <select class="input-field" [(ngModel)]="nuovoStato">
+          <option *ngFor="let s of stati" [value]="s">{{ s }}</option>
+        </select>
+        <button class="btn btn-primary" (click)="aggiornaStato()" [disabled]="nuovoStato === ordine.stato">
+          Aggiorna
+        </button>
+      </div>
+    </div>
+
+    <!-- Dettagli piatti -->
+    <div class="section">
+      <h2>🍽️ Piatti ordinati</h2>
+      <div class="table-wrapper" *ngIf="ordine.dettagli && ordine.dettagli.length > 0">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Piatto</th>
+              <th>Quantità</th>
+              <th>Prezzo unitario</th>
+              <th>Subtotale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of ordine.dettagli">
+              <td>{{ d.piatto_nome }}</td>
+              <td>{{ d.quantita }}</td>
+              <td>€ {{ d.prez_unit | number:'1.2-2' }}</td>
+              <td>€ {{ (d.prez_unit * d.quantita) | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3"><strong>Totale</strong></td>
+              <td><strong>€ {{ totaleCalcolato | number:'1.2-2' }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="empty-state" *ngIf="!ordine.dettagli || ordine.dettagli.length === 0">Nessun piatto.</p>
+    </div>
+  </div>
+</div>

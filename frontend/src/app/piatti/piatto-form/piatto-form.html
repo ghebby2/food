@@ -1,0 +1,41 @@
+<div class="page-container page-narrow">
+  <h1>{{ isModifica ? '✏️ Modifica Piatto' : '🆕 Nuovo Piatto' }}</h1>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label>Ristorante *</label>
+      <select class="input-field" [(ngModel)]="form.id_ristorante">
+        <option [value]="0" disabled>Seleziona ristorante</option>
+        <option *ngFor="let r of ristoranti" [value]="r.id_ristorante">{{ r.nome }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Nome Piatto *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.nome" placeholder="Es. Margherita" />
+    </div>
+
+    <div class="form-group">
+      <label>Prezzo (€) *</label>
+      <input class="input-field" type="number" step="0.01" min="0" [(ngModel)]="form.prezzo" />
+    </div>
+
+    <div class="form-group">
+      <label>Disponibile</label>
+      <select class="input-field" [(ngModel)]="form.disponibile">
+        <option [value]="1">Sì</option>
+        <option [value]="0">No</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  </div>
+</div>

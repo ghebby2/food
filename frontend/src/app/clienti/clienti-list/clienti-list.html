@@ -1,0 +1,36 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>👤 Clienti</h1>
+    <button class="btn btn-primary" (click)="nuovo()">+ Nuovo Cliente</button>
+  </div>
+
+  <div class="filtri-card">
+    <input class="input-field" type="text" placeholder="Cerca per nome o cognome..." [(ngModel)]="filtroNome" (keyup.enter)="cerca()" />
+    <button class="btn btn-secondary" (click)="cerca()">Cerca</button>
+    <button class="btn btn-ghost" (click)="resetFiltri()">Reset</button>
+  </div>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+
+  <div class="table-wrapper" *ngIf="!loading && clienti.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr><th>Nome</th><th>Cognome</th><th>Email</th><th>Indirizzo</th><th>Azioni</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of clienti" (click)="apriDettaglio(c.id_cliente)" class="row-clickable">
+          <td>{{ c.nome }}</td>
+          <td>{{ c.cognome }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.ind_consegna }}</td>
+          <td (click)="$event.stopPropagation()">
+            <button class="btn btn-sm btn-outline" (click)="apriDettaglio(c.id_cliente)">Dettaglio</button>
+            <button class="btn btn-sm btn-danger" (click)="elimina(c.id_cliente, $event)">Elimina</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="empty-state" *ngIf="!loading && clienti.length === 0">Nessun cliente trovato.</p>
+</div>

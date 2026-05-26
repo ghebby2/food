@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>🍕 Piatti</h1>
+    <button class="btn btn-primary" (click)="nuovo()">+ Nuovo Piatto</button>
+  </div>
+
+  <div class="filtri-card">
+    <input class="input-field" type="text" placeholder="Cerca per nome..." [(ngModel)]="filtroNome" (keyup.enter)="cerca()" />
+    <select class="input-field" [(ngModel)]="filtroRistorante">
+      <option [value]="undefined">Tutti i ristoranti</option>
+      <option *ngFor="let r of ristoranti" [value]="r.id_ristorante">{{ r.nome }}</option>
+    </select>
+    <select class="input-field" [(ngModel)]="filtroDisponibile">
+      <option value="">Tutti</option>
+      <option value="1">Disponibile</option>
+      <option value="0">Non disponibile</option>
+    </select>
+    <button class="btn btn-secondary" (click)="cerca()">Cerca</button>
+    <button class="btn btn-ghost" (click)="resetFiltri()">Reset</button>
+  </div>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+
+  <div class="table-wrapper" *ngIf="!loading && piatti.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Ristorante</th>
+          <th>Prezzo</th>
+          <th>Disponibile</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of piatti" (click)="apriDettaglio(p.id_piatto)" class="row-clickable">
+          <td>{{ p.nome }}</td>
+          <td>{{ p.ristorante_nome }}</td>
+          <td>€ {{ p.prezzo | number:'1.2-2' }}</td>
+          <td>
+            <span class="badge" [ngClass]="p.disponibile ? 'badge-green' : 'badge-red'">
+              {{ p.disponibile ? 'Sì' : 'No' }}
+            </span>
+          </td>
+          <td (click)="$event.stopPropagation()">
+            <button class="btn btn-sm btn-outline" (click)="apriDettaglio(p.id_piatto)">Dettaglio</button>
+            <button class="btn btn-sm btn-danger" (click)="elimina(p.id_piatto, $event)">Elimina</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="empty-state" *ngIf="!loading && piatti.length === 0">Nessun piatto trovato.</p>
+</div>

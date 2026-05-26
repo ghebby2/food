@@ -1,0 +1,45 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>📦 Ordini</h1>
+    <button class="btn btn-primary" (click)="nuovo()">+ Nuovo Ordine</button>
+  </div>
+
+  <div class="filtri-card">
+    <select class="input-field" [(ngModel)]="filtroCliente">
+      <option [value]="undefined">Tutti i clienti</option>
+      <option *ngFor="let c of clienti" [value]="c.id_cliente">{{ c.nome }} {{ c.cognome }}</option>
+    </select>
+    <select class="input-field" [(ngModel)]="filtroStato">
+      <option value="">Tutti gli stati</option>
+      <option *ngFor="let s of stati" [value]="s">{{ s }}</option>
+    </select>
+    <button class="btn btn-secondary" (click)="carica()">Filtra</button>
+    <button class="btn btn-ghost" (click)="resetFiltri()">Reset</button>
+  </div>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+
+  <div class="table-wrapper" *ngIf="!loading && ordini.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr><th>ID</th><th>Cliente</th><th>Fattorino</th><th>Stato</th><th>Totale</th><th>Data</th><th>Azioni</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of ordini" (click)="apriDettaglio(o.id_ordine)" class="row-clickable">
+          <td><strong>#{{ o.id_ordine }}</strong></td>
+          <td>{{ o.cliente_nome }} {{ o.cliente_cognome }}</td>
+          <td>{{ o.fattorino_nome || 'N/D' }}</td>
+          <td><span class="badge" [ngClass]="badgeClass(o.stato)">{{ o.stato }}</span></td>
+          <td>€ {{ o.totale | number:'1.2-2' }}</td>
+          <td>{{ o.data_ora | date:'dd/MM/yy HH:mm' }}</td>
+          <td (click)="$event.stopPropagation()">
+            <button class="btn btn-sm btn-outline" (click)="apriDettaglio(o.id_ordine)">Dettaglio</button>
+            <button class="btn btn-sm btn-danger" (click)="elimina(o.id_ordine, $event)">Elimina</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="empty-state" *ngIf="!loading && ordini.length === 0">Nessun ordine trovato.</p>
+</div>

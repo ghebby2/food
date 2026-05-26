@@ -1,0 +1,30 @@
+<div class="page-container page-narrow">
+  <h1>{{ isModifica ? '✏️ Modifica Cliente' : '🆕 Nuovo Cliente' }}</h1>
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label>Nome *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.nome" placeholder="Mario" />
+    </div>
+    <div class="form-group">
+      <label>Cognome *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.cognome" placeholder="Rossi" />
+    </div>
+    <div class="form-group">
+      <label>Email *</label>
+      <input class="input-field" type="email" [(ngModel)]="form.email" placeholder="mario@email.it" />
+    </div>
+    <div class="form-group">
+      <label>Indirizzo di consegna *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.ind_consegna" placeholder="Via Roma 1, Milano" />
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="page-container page-narrow">
+  <h1>{{ isModifica ? '✏️ Modifica Fattorino' : '🆕 Nuovo Fattorino' }}</h1>
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label>Nome *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.nome" placeholder="Es. Luca Bianchi" />
+    </div>
+    <div class="form-group">
+      <label>Mezzo *</label>
+      <select class="input-field" [(ngModel)]="form.mezzo">
+        <option value="">Seleziona mezzo</option>
+        <option value="bicicletta">Bicicletta</option>
+        <option value="motorino">Motorino</option>
+        <option value="moto">Moto</option>
+        <option value="auto">Auto</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Disponibile</label>
+      <select class="input-field" [(ngModel)]="form.disponibile">
+        <option [value]="1">Sì</option>
+        <option [value]="0">No</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  </div>
+</div>

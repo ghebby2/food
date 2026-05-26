@@ -1,0 +1,60 @@
+<div class="page-container page-narrow">
+  <h1>{{ isModifica ? '✏️ Modifica Recensione' : '🆕 Nuova Recensione' }}</h1>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <!-- Cliente (solo in creazione) -->
+    <div class="form-group" *ngIf="!isModifica">
+      <label>Cliente *</label>
+      <select class="input-field" [(ngModel)]="form.id_cliente">
+        <option [value]="0" disabled>Seleziona cliente</option>
+        <option *ngFor="let c of clienti" [value]="c.id_cliente">{{ c.nome }} {{ c.cognome }}</option>
+      </select>
+    </div>
+
+    <!-- Ristorante (solo in creazione) -->
+    <div class="form-group" *ngIf="!isModifica">
+      <label>Ristorante *</label>
+      <select class="input-field" [(ngModel)]="form.id_ristorante">
+        <option [value]="0" disabled>Seleziona ristorante</option>
+        <option *ngFor="let r of ristoranti" [value]="r.id_ristorante">{{ r.nome }}</option>
+      </select>
+    </div>
+
+    <!-- Voto -->
+    <div class="form-group">
+      <label>Voto *</label>
+      <div class="voto-selector">
+        <button
+          *ngFor="let v of voti"
+          class="btn-voto"
+          [class.attivo]="form.voto >= v"
+          (click)="form.voto = v"
+          type="button">
+          ★
+        </button>
+        <span class="voto-label">{{ stelle(form.voto) }} ({{ form.voto }}/5)</span>
+      </div>
+    </div>
+
+    <!-- Commento -->
+    <div class="form-group">
+      <label>Commento</label>
+      <textarea
+        class="input-field"
+        rows="4"
+        [(ngModel)]="form.commento"
+        placeholder="Scrivi la tua recensione...">
+      </textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  </div>
+</div>

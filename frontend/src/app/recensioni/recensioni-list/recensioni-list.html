@@ -1,0 +1,45 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>💬 Recensioni</h1>
+    <button class="btn btn-primary" (click)="nuova()">+ Nuova Recensione</button>
+  </div>
+
+  <div class="filtri-card">
+    <select class="input-field" [(ngModel)]="filtroRistorante">
+      <option [value]="undefined">Tutti i ristoranti</option>
+      <option *ngFor="let r of ristoranti" [value]="r.id_ristorante">{{ r.nome }}</option>
+    </select>
+    <select class="input-field" [(ngModel)]="filtroVotoMin">
+      <option [value]="undefined">Qualsiasi voto</option>
+      <option [value]="1">≥ 1 ★</option>
+      <option [value]="2">≥ 2 ★</option>
+      <option [value]="3">≥ 3 ★</option>
+      <option [value]="4">≥ 4 ★</option>
+      <option [value]="5">5 ★</option>
+    </select>
+    <button class="btn btn-secondary" (click)="carica()">Filtra</button>
+    <button class="btn btn-ghost" (click)="resetFiltri()">Reset</button>
+  </div>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+
+  <div class="grid-cards" *ngIf="!loading && recensioni.length > 0">
+    <div class="card" *ngFor="let r of recensioni">
+      <div class="card-body">
+        <div class="recensione-header">
+          <strong>{{ r.cliente_nome }} {{ r.cliente_cognome }}</strong>
+          <span class="stelle">{{ stelle(r.voto) }}</span>
+        </div>
+        <p class="text-muted">🍽️ {{ r.ristorante_nome }}</p>
+        <p *ngIf="r.commento">{{ r.commento }}</p>
+        <small class="text-muted">{{ r.data | date:'dd/MM/yyyy' }}</small>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-sm btn-outline" (click)="modifica(r.id_recensione, $event)">Modifica</button>
+        <button class="btn btn-sm btn-danger" (click)="elimina(r.id_recensione, $event)">Elimina</button>
+      </div>
+    </div>
+  </div>
+  <p class="empty-state" *ngIf="!loading && recensioni.length === 0">Nessuna recensione trovata.</p>
+</div>

@@ -1,0 +1,28 @@
+<div class="page-container page-narrow">
+  <h1>{{ isModifica ? '✏️ Modifica Ingrediente' : '🆕 Nuovo Ingrediente' }}</h1>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label>Nome *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.nome" placeholder="Es. Pomodoro" />
+    </div>
+
+    <div class="form-group">
+      <label>Allergenico</label>
+      <select class="input-field" [(ngModel)]="form.allergenico">
+        <option [value]="0">No</option>
+        <option [value]="1">Sì ⚠️</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  </div>
+</div>

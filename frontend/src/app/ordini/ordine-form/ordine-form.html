@@ -1,0 +1,81 @@
+<div class="page-container page-narrow">
+  <h1>🆕 Nuovo Ordine</h1>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <!-- Cliente -->
+    <div class="form-group">
+      <label>Cliente *</label>
+      <select class="input-field" [(ngModel)]="form.id_cliente">
+        <option [value]="0" disabled>Seleziona cliente</option>
+        <option *ngFor="let c of clienti" [value]="c.id_cliente">{{ c.nome }} {{ c.cognome }}</option>
+      </select>
+    </div>
+
+    <!-- Fattorino -->
+    <div class="form-group">
+      <label>Fattorino *</label>
+      <select class="input-field" [(ngModel)]="form.id_fattorino">
+        <option [value]="0" disabled>Seleziona fattorino</option>
+        <option *ngFor="let f of fattorini" [value]="f.id_fattorino">{{ f.nome }} ({{ f.mezzo }})</option>
+      </select>
+    </div>
+
+    <!-- Stato -->
+    <div class="form-group">
+      <label>Stato</label>
+      <select class="input-field" [(ngModel)]="form.stato">
+        <option value="in attesa">in attesa</option>
+        <option value="confermato">confermato</option>
+      </select>
+    </div>
+
+    <!-- Aggiungi piatti -->
+    <div class="section">
+      <h3>🍕 Aggiungi Piatti</h3>
+      <div class="filtri-card">
+        <select class="input-field" [(ngModel)]="piattoSelezionato">
+          <option [value]="0" disabled>Seleziona piatto</option>
+          <option *ngFor="let p of piatti" [value]="p.id_piatto">{{ p.nome }} — € {{ p.prezzo | number:'1.2-2' }} ({{ p.ristorante_nome }})</option>
+        </select>
+        <input class="input-field" style="width:80px" type="number" min="1" [(ngModel)]="quantitaSelezionata" />
+        <button class="btn btn-secondary" (click)="aggiungiPiatto()" [disabled]="!piattoSelezionato">+ Aggiungi</button>
+      </div>
+
+      <!-- Lista piatti selezionati -->
+      <div class="table-wrapper" *ngIf="dettagli.length > 0">
+        <table class="data-table">
+          <thead>
+            <tr><th>Piatto</th><th>Qtà</th><th>Prezzo unit.</th><th>Subtotale</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of dettagli; let i = index">
+              <td>{{ d.piatto_nome }}</td>
+              <td>{{ d.quantita }}</td>
+              <td>€ {{ d.prez_unit | number:'1.2-2' }}</td>
+              <td>€ {{ (d.prez_unit * d.quantita) | number:'1.2-2' }}</td>
+              <td><button class="btn btn-sm btn-danger" (click)="rimuoviPiatto(i)">✕</button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3"><strong>Totale</strong></td>
+              <td><strong>€ {{ totale | number:'1.2-2' }}</strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="empty-state" *ngIf="dettagli.length === 0">Nessun piatto aggiunto.</p>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Crea Ordine' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>🧂 Ingredienti</h1>
+    <button class="btn btn-primary" (click)="nuovo()">+ Nuovo Ingrediente</button>
+  </div>
+
+  <div class="filtri-card">
+    <select class="input-field" [(ngModel)]="filtroAllergenico" (change)="carica()">
+      <option value="">Tutti</option>
+      <option value="1">Solo allergenici ⚠️</option>
+      <option value="0">Non allergenici</option>
+    </select>
+  </div>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+
+  <div class="table-wrapper" *ngIf="!loading && ingredienti.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr><th>Nome</th><th>Allergenico</th><th>Azioni</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of ingredienti">
+          <td>{{ i.nome }}</td>
+          <td>
+            <span class="badge" [ngClass]="i.allergenico ? 'badge-red' : 'badge-green'">
+              {{ i.allergenico ? '⚠️ Sì' : 'No' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline" (click)="modifica(i.id_ingrediente, $event)">Modifica</button>
+            <button class="btn btn-sm btn-danger" (click)="elimina(i.id_ingrediente, $event)">Elimina</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="empty-state" *ngIf="!loading && ingredienti.length === 0">Nessun ingrediente trovato.</p>
+</div>

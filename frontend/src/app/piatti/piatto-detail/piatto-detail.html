@@ -1,0 +1,52 @@
+<div class="page-container">
+  <div *ngIf="loading" class="loading-spinner">Caricamento...</div>
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div *ngIf="piatto && !loading">
+    <div class="page-header">
+      <div>
+        <button class="btn btn-ghost" (click)="indietro()">← Indietro</button>
+        <h1>{{ piatto.nome }}</h1>
+        <p class="text-muted">{{ piatto.ristorante_nome }}</p>
+      </div>
+      <button class="btn btn-primary" (click)="modifica()">✏️ Modifica</button>
+    </div>
+
+    <div class="detail-info">
+      <p>💶 <strong>Prezzo:</strong> € {{ piatto.prezzo | number:'1.2-2' }}</p>
+      <p>
+        <strong>Disponibile:</strong>
+        <span class="badge" [ngClass]="piatto.disponibile ? 'badge-green' : 'badge-red'">
+          {{ piatto.disponibile ? 'Sì' : 'No' }}
+        </span>
+      </p>
+    </div>
+
+    <!-- Ingredienti -->
+    <div class="section">
+      <h2>🧂 Ingredienti</h2>
+
+      <div class="ingredienti-list">
+        <div class="ingrediente-tag" *ngFor="let ing of piatto.ingredienti">
+          <span>{{ ing.nome }}</span>
+          <span *ngIf="ing.allergenico" class="allergenico-badge">⚠️</span>
+          <button class="btn-remove" (click)="rimuoviIngrediente(ing.id_ingrediente)">✕</button>
+        </div>
+        <p *ngIf="piatto.ingredienti?.length === 0" class="text-muted">Nessun ingrediente.</p>
+      </div>
+
+      <div class="add-ingrediente" *ngIf="ingredientiDisponibili().length > 0">
+        <select class="input-field" [(ngModel)]="nuovoIngredienteId">
+          <option [value]="0" disabled>Aggiungi ingrediente...</option>
+          <option *ngFor="let i of ingredientiDisponibili()" [value]="i.id_ingrediente">
+            {{ i.nome }} {{ i.allergenico ? '⚠️' : '' }}
+          </option>
+        </select>
+        <button class="btn btn-secondary" (click)="aggiungiIngrediente()" [disabled]="!nuovoIngredienteId">
+          + Aggiungi
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

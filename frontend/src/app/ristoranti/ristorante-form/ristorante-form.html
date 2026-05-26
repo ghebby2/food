@@ -1,0 +1,38 @@
+<div class="page-container page-narrow">
+  <h1>{{ isModifica ? '✏️ Modifica Ristorante' : '🆕 Nuovo Ristorante' }}</h1>
+
+  <div *ngIf="errore" class="alert alert-error">{{ errore }}</div>
+  <div *ngIf="successo" class="alert alert-success">{{ successo }}</div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label>Categoria *</label>
+      <select class="input-field" [(ngModel)]="form.id_categoria">
+        <option [value]="0" disabled>Seleziona categoria</option>
+        <option *ngFor="let c of categorie" [value]="c.id_categoria">{{ c.nome }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Nome Ristorante *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.nome" placeholder="Es. Pizzeria da Mario" />
+    </div>
+
+    <div class="form-group">
+      <label>Indirizzo *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.indirizzo" placeholder="Via Roma 1, Milano" />
+    </div>
+
+    <div class="form-group">
+      <label>Telefono *</label>
+      <input class="input-field" type="text" [(ngModel)]="form.telefono" placeholder="02 1234567" />
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-ghost" (click)="annulla()">Annulla</button>
+      <button class="btn btn-primary" (click)="salva()" [disabled]="loading">
+        {{ loading ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  </div>
+</div>
