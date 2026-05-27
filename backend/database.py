@@ -5,10 +5,10 @@ DB_CONFIG = {
     "host":     "gateway01.eu-central-1.prod.aws.tidbcloud.com",
     "port":     4000,
     "user":     "2SZc5k7KdZYPqyW.root",
-    "password": "EAzo9YQJFqmrdGyr",
+    "password": "T05FdrumMHpuNPGo",
     "database": "Food",
     "cursorclass": pymysql.cursors.DictCursor,
-    "ssl": {"ca": None},          # TiDB Cloud richiede TLS
+    "ssl": {"ca": None},         
     "connect_timeout": 10,
 }
 def get_db():
