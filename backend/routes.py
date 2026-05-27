@@ -49,6 +49,9 @@ def delete_categoria(id):
     row = query_db("SELECT * FROM categoria_ristorante WHERE id_categoria = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Categoria non trovata"}), 404
+    n = query_db("SELECT COUNT(*) as n FROM ristorante WHERE id_categoria = %s", [id], one=True)
+    if n['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: la categoria ha {n['n']} ristoranti collegati"}), 409
     mutate_db("DELETE FROM categoria_ristorante WHERE id_categoria = %s", [id])
     return jsonify({"message": "Categoria eliminata"})
 
@@ -125,9 +128,14 @@ def delete_ristorante(id):
     row = query_db("SELECT * FROM ristorante WHERE id_ristorante = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Ristorante non trovato"}), 404
+    piatti = query_db("SELECT COUNT(*) as n FROM piatto WHERE id_ristorante = %s", [id], one=True)
+    if piatti['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: il ristorante ha {piatti['n']} piatti collegati"}), 409
+    recensioni = query_db("SELECT COUNT(*) as n FROM recensioni WHERE id_ristorante = %s", [id], one=True)
+    if recensioni['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: il ristorante ha {recensioni['n']} recensioni collegate"}), 409
     mutate_db("DELETE FROM ristorante WHERE id_ristorante = %s", [id])
     return jsonify({"message": "Ristorante eliminato"})
-
 # ─────────────────────────────────────────────
 #  PIATTO
 # ─────────────────────────────────────────────
@@ -212,9 +220,12 @@ def delete_piatto(id):
     row = query_db("SELECT * FROM piatto WHERE id_piatto = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Piatto non trovato"}), 404
+    n = query_db("SELECT COUNT(*) as n FROM dettaglio_ordine WHERE id_piatto = %s", [id], one=True)
+    if n['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: il piatto è presente in {n['n']} ordini"}), 409
+    mutate_db("DELETE FROM composizione_piatto WHERE id_piatto = %s", [id])
     mutate_db("DELETE FROM piatto WHERE id_piatto = %s", [id])
     return jsonify({"message": "Piatto eliminato"})
-
 # ─────────────────────────────────────────────
 #  INGREDIENTE
 # ─────────────────────────────────────────────
@@ -265,6 +276,9 @@ def delete_ingrediente(id):
     row = query_db("SELECT * FROM ingrediente WHERE id_ingrediente = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Ingrediente non trovato"}), 404
+    n = query_db("SELECT COUNT(*) as n FROM composizione_piatto WHERE id_ingrediente = %s", [id], one=True)
+    if n['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: l'ingrediente è usato in {n['n']} piatti"}), 409
     mutate_db("DELETE FROM ingrediente WHERE id_ingrediente = %s", [id])
     return jsonify({"message": "Ingrediente eliminato"})
 
@@ -361,6 +375,12 @@ def delete_cliente(id):
     row = query_db("SELECT * FROM clienti WHERE id_cliente = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Cliente non trovato"}), 404
+    ordini = query_db("SELECT COUNT(*) as n FROM ordine WHERE id_cliente = %s", [id], one=True)
+    if ordini['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: il cliente ha {ordini['n']} ordini collegati"}), 409
+    recensioni = query_db("SELECT COUNT(*) as n FROM recensioni WHERE id_cliente = %s", [id], one=True)
+    if recensioni['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: il cliente ha {recensioni['n']} recensioni collegate"}), 409
     mutate_db("DELETE FROM clienti WHERE id_cliente = %s", [id])
     return jsonify({"message": "Cliente eliminato"})
 
@@ -421,8 +441,12 @@ def delete_fattorino(id):
     row = query_db("SELECT * FROM fattorino WHERE id_fattorino = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Fattorino non trovato"}), 404
+    n = query_db("SELECT COUNT(*) as n FROM ordine WHERE id_fattorino = %s", [id], one=True)
+    if n['n'] > 0:
+        return jsonify({"error": f"Impossibile eliminare: il fattorino ha {n['n']} ordini collegati"}), 409
     mutate_db("DELETE FROM fattorino WHERE id_fattorino = %s", [id])
     return jsonify({"message": "Fattorino eliminato"})
+ 
 
 # ─────────────────────────────────────────────
 #  ORDINE
@@ -528,6 +552,8 @@ def delete_ordine(id):
     row = query_db("SELECT * FROM ordine WHERE id_ordine = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Ordine non trovato"}), 404
+
+    mutate_db("DELETE FROM dettaglio_ordine WHERE id_ordine = %s", [id])
     mutate_db("DELETE FROM ordine WHERE id_ordine = %s", [id])
     return jsonify({"message": "Ordine eliminato"})
 

@@ -1,4 +1,5 @@
 import pymysql
+import time
 import pymysql.cursors
 DB_CONFIG = {
     "host":     "gateway01.eu-central-1.prod.aws.tidbcloud.com",
@@ -11,8 +12,15 @@ DB_CONFIG = {
     "connect_timeout": 10,
 }
 def get_db():
-    conn = pymysql.connect(**DB_CONFIG)
-    return conn
+    for attempt in range(3):
+        try:
+            conn = pymysql.connect(**DB_CONFIG)
+            return conn
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(0.5)
+            else:
+                raise e
 def query_db(query, args=(), one=False):
     conn = get_db()
     try:
