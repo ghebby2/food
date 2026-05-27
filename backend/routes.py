@@ -581,7 +581,6 @@ def get_recensioni():
     if voto_min:
         query += " AND rec.voto >= %s"
         args.append(voto_min)
-    query += " ORDER BY rec.data DESC"
     rows = query_db(query, args)
     return jsonify([dict(r) for r in rows])
 
