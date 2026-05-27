@@ -457,7 +457,10 @@ def get_ordini():
     id_cliente = request.args.get('id_cliente', '')
     stato = request.args.get('stato', '')
     query = """
-        SELECT o.*,
+        SELECT o.id_ordine,
+               o.stato_consegna AS stato,
+               o.totale_prezzo AS totale,
+               o.data_ordine AS data_ora,
                c.nome AS cliente_nome, c.cognome AS cliente_cognome,
                f.nome AS fattorino_nome
         FROM ordine o
@@ -470,16 +473,19 @@ def get_ordini():
         query += " AND o.id_cliente = %s"
         args.append(id_cliente)
     if stato:
-        query += " AND o.stato = %s"
+        query += " AND o.stato_consegna = %s"
         args.append(stato)
-    query += " ORDER BY o.data_ora DESC"
+    query += " ORDER BY o.data_ordine DESC"
     rows = query_db(query, args)
     return jsonify([dict(r) for r in rows])
 
 @api.route('/ordini/<int:id>', methods=['GET'])
 def get_ordine(id):
     row = query_db("""
-        SELECT o.*,
+        SELECT o.id_ordine,
+               o.stato_consegna AS stato,
+               o.totale_prezzo AS totale,
+               o.data_ordine AS data_ora,
                c.nome AS cliente_nome, c.cognome AS cliente_cognome,
                f.nome AS fattorino_nome
         FROM ordine o
@@ -509,27 +515,32 @@ def create_ordine():
     dettagli = data.get('dettagli', [])
     if not dettagli:
         return jsonify({"error": "L'ordine deve contenere almeno un piatto"}), 400
-    totale = sum(d.get('prez_unit', 0) * d.get('quantita', 1) for d in dettagli)
+    
+    # calcola totale prendendo il prezzo dal DB
+    totale = 0
+    for d in dettagli:
+        piatto = query_db("SELECT prezzo FROM piatto WHERE id_piatto = %s", [d['id_piatto']], one=True)
+        if piatto:
+            totale += float(piatto['prezzo']) * int(d.get('quantita', 1))
+
     conn = get_db()
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO ordine (id_cliente, id_fattorino, stato, totale) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO ordine (id_cliente, id_fattorino, stato_consegna, totale_prezzo) VALUES (%s, %s, %s, %s)",
                 [data['id_cliente'], data['id_fattorino'], data.get('stato', 'in attesa'), totale]
             )
             new_id = cur.lastrowid
             for d in dettagli:
                 cur.execute(
-                    "INSERT INTO dettaglio_ordine (id_ordine, id_piatto, quantita, prez_unit) VALUES (%s, %s, %s, %s)",
-                    [new_id, d['id_piatto'], d.get('quantita', 1), d['prez_unit']]
+                    "INSERT INTO dettaglio_ordine (id_ordine, id_piatto, quantita) VALUES (%s, %s, %s)",
+                    [new_id, d['id_piatto'], d.get('quantita', 1)]
                 )
         conn.commit()
         return jsonify({"message": "Ordine creato", "id_ordine": new_id, "totale": totale}), 201
     except Exception as e:
         conn.rollback()
         return jsonify({"error": str(e)}), 500
-    finally:
-        conn.close()
 
 @api.route('/ordini/<int:id>', methods=['PUT'])
 def update_ordine(id):
@@ -538,11 +549,11 @@ def update_ordine(id):
         return jsonify({"error": "Ordine non trovato"}), 404
     data = request.get_json()
     stati_validi = ['in attesa', 'confermato', 'in consegna', 'consegnato', 'annullato']
-    nuovo_stato = data.get('stato', row['stato'])
+    nuovo_stato = data.get('stato', row['stato_consegna'])
     if nuovo_stato not in stati_validi:
         return jsonify({"error": f"Stato non valido. Valori ammessi: {stati_validi}"}), 400
     mutate_db(
-        "UPDATE ordine SET stato=%s, id_fattorino=%s WHERE id_ordine=%s",
+        "UPDATE ordine SET stato_consegna=%s, id_fattorino=%s WHERE id_ordine=%s",
         [nuovo_stato, data.get('id_fattorino', row['id_fattorino']), id]
     )
     return jsonify({"message": "Ordine aggiornato"})
@@ -552,11 +563,9 @@ def delete_ordine(id):
     row = query_db("SELECT * FROM ordine WHERE id_ordine = %s", [id], one=True)
     if not row:
         return jsonify({"error": "Ordine non trovato"}), 404
-
     mutate_db("DELETE FROM dettaglio_ordine WHERE id_ordine = %s", [id])
     mutate_db("DELETE FROM ordine WHERE id_ordine = %s", [id])
     return jsonify({"message": "Ordine eliminato"})
-
 # ─────────────────────────────────────────────
 #  RECENSIONI
 # ─────────────────────────────────────────────
