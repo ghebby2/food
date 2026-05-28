@@ -33,7 +33,6 @@
         </div>
         <p class="text-muted">🍽️ {{ r.ristorante_nome }}</p>
         <p *ngIf="r.commento">{{ r.commento }}</p>
-        <small class="text-muted">{{ r.data | date:'dd/MM/yyyy' }}</small>
       </div>
       <div class="card-actions">
         <button class="btn btn-sm btn-outline" (click)="modifica(r.id_recensione, $event)">Modifica</button>

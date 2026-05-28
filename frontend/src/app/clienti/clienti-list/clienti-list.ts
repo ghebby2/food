@@ -39,6 +39,9 @@ export class ClientiListComponent implements OnInit {
   elimina(id: number, event: Event): void {
     event.stopPropagation();
     if (!confirm('Eliminare questo cliente?')) return;
-    this.svc.delete(id).subscribe({ next: () => this.carica() });
+    this.svc.delete(id).subscribe({
+      next: () => this.carica(),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
+    });
   }
 }

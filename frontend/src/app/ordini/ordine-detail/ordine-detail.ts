@@ -61,7 +61,8 @@ export class OrdineDetailComponent implements OnInit {
   elimina(): void {
     if (!confirm('Eliminare questo ordine?')) return;
     this.svc.delete(this.ordine!.id_ordine).subscribe({
-      next: () => this.router.navigate(['/ordini'])
+      next: () => this.router.navigate(['/ordini']),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
     });
   }
 

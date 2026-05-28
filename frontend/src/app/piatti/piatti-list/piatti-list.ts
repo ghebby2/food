@@ -56,7 +56,10 @@ export class PiattiListComponent implements OnInit {
   elimina(id: number, event: Event): void {
     event.stopPropagation();
     if (!confirm('Eliminare questo piatto?')) return;
-    this.svc.delete(id).subscribe({ next: () => this.caricaPiatti() });
+    this.svc.delete(id).subscribe({
+      next: () => this.caricaPiatti(),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
+    });
   }
 
   nuovo(): void { this.router.navigate(['/piatti/nuovo']); }

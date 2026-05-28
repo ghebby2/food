@@ -41,6 +41,9 @@ export class IngredientiListComponent implements OnInit {
   elimina(id: number, e: Event): void {
     e.stopPropagation();
     if (!confirm('Eliminare questo ingrediente?')) return;
-    this.svc.deleteIngrediente(id).subscribe({ next: () => this.carica() });
+    this.svc.deleteIngrediente(id).subscribe({
+      next: () => this.carica(),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
+    });
   }
 }

@@ -45,7 +45,10 @@ export class OrdiniListComponent implements OnInit {
   elimina(id: number, e: Event): void {
     e.stopPropagation();
     if (!confirm('Eliminare questo ordine?')) return;
-    this.svc.delete(id).subscribe({ next: () => this.carica() });
+    this.svc.delete(id).subscribe({
+      next: () => this.carica(),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
+    });
   }
 
   badgeClass(stato: string): string {

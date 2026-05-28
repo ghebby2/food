@@ -67,7 +67,7 @@ export class RistorantiListComponent implements OnInit {
     if (!confirm('Eliminare questo ristorante?')) return;
     this.svc.delete(id).subscribe({
       next: () => this.caricaRistoranti(),
-      error: () => (this.errore = 'Errore durante l\'eliminazione')
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
     });
   }
 

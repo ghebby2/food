@@ -117,7 +117,6 @@ export interface Recensione {
   id_ristorante: number;
   voto: number;
   commento?: string;
-  data?: string;
   cliente_nome?: string;
   cliente_cognome?: string;
   ristorante_nome?: string;

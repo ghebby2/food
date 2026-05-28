@@ -37,6 +37,9 @@ export class FattoriniListComponent implements OnInit {
   elimina(id: number, e: Event): void {
     e.stopPropagation();
     if (!confirm('Eliminare questo fattorino?')) return;
-    this.svc.delete(id).subscribe({ next: () => this.carica() });
+    this.svc.delete(id).subscribe({
+      next: () => this.carica(),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
+    });
   }
 }

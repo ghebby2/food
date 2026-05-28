@@ -56,7 +56,10 @@ export class RecensioniListComponent implements OnInit {
   elimina(id: number, e: Event): void {
     e.stopPropagation();
     if (!confirm('Eliminare questa recensione?')) return;
-    this.svc.delete(id).subscribe({ next: () => this.carica() });
+    this.svc.delete(id).subscribe({
+      next: () => this.carica(),
+      error: (err) => (this.errore = err.error?.error || 'Errore durante l\'eliminazione')
+    });
   }
 
   stelle(voto: number): string {
